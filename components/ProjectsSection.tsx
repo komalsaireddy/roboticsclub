@@ -7,9 +7,15 @@ import {
   FileText,
 } from "lucide-react";
 
-import projects from "@/lib/data/projects";
+import type { Project } from "@/lib/data/projects";
 
-export default function ProjectsSection() {
+interface ProjectsSectionProps {
+  projects: Project[];
+}
+
+export default function ProjectsSection({
+  projects,
+}: ProjectsSectionProps) {
   return (
     <section
       id="projects"
@@ -41,7 +47,6 @@ export default function ProjectsSection() {
           className="mb-16 flex items-center justify-between sm:mb-20"
         >
           <div className="flex items-center gap-4">
-
             <span className="font-mono text-[11px] font-medium tracking-[0.28em] text-cyan-400/70">
               02
             </span>
@@ -51,7 +56,6 @@ export default function ProjectsSection() {
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-white/40">
               Projects
             </span>
-
           </div>
 
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-white/20 sm:block">
@@ -82,7 +86,6 @@ export default function ProjectsSection() {
           }}
           className="mb-20 grid gap-10 lg:grid-cols-[1fr_0.55fr] lg:items-end"
         >
-
           <h2 className="text-[clamp(3rem,6.5vw,6.5rem)] font-semibold leading-[0.9] tracking-[-0.055em] text-white">
             ENGINEERED
             <br />
@@ -92,7 +95,6 @@ export default function ProjectsSection() {
           </h2>
 
           <div>
-
             <div className="mb-6 h-px w-14 bg-cyan-400/60" />
 
             <p className="max-w-md text-[15px] leading-7 text-white/45 sm:text-[16px] sm:leading-8">
@@ -100,9 +102,7 @@ export default function ProjectsSection() {
               autonomous systems, mobile robotics, humanoid robotics and
               embedded engineering.
             </p>
-
           </div>
-
         </motion.div>
 
         {/* ============================================================
@@ -111,140 +111,118 @@ export default function ProjectsSection() {
 
         <div className="border-t border-white/[0.08]">
 
-          {projects.map((project, index) => (
-            <motion.article
-              key={project.id}
-              initial={{
-                opacity: 0,
-                y: 25,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.12,
-              }}
-              transition={{
-                duration: 0.65,
-                delay: index * 0.04,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="group relative grid border-b border-white/[0.08] py-9 transition-colors duration-500 hover:bg-white/[0.018] sm:py-11 lg:grid-cols-[70px_1fr_1.2fr_190px] lg:items-center lg:gap-8"
-            >
+          {projects.length === 0 ? (
+            <div className="border-b border-white/[0.08] py-16 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/25">
+                No projects available
+              </p>
+            </div>
+          ) : (
+            projects.map((project, index) => (
+              <motion.article
+                key={project.id}
+                initial={{
+                  opacity: 0,
+                  y: 25,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                viewport={{
+                  once: true,
+                  amount: 0.12,
+                }}
+                transition={{
+                  duration: 0.65,
+                  delay: index * 0.04,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="group relative grid border-b border-white/[0.08] py-9 transition-colors duration-500 hover:bg-white/[0.018] sm:py-11 lg:grid-cols-[70px_1fr_1.2fr_190px] lg:items-center lg:gap-8"
+              >
 
-              {/* ======================================================
-                  NUMBER
-              ====================================================== */}
+                {/* NUMBER */}
 
-              <div className="mb-5 lg:mb-0">
-
-                <span className="font-mono text-[11px] tracking-[0.2em] text-white/25">
-                  {project.number}
-                </span>
-
-              </div>
-
-              {/* ======================================================
-                  TITLE
-              ====================================================== */}
-
-              <div className="mb-5 lg:mb-0">
-
-                <div className="mb-2.5">
-
-                  <span className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-cyan-400/55">
-                    {project.category}
+                <div className="mb-5 lg:mb-0">
+                  <span className="font-mono text-[11px] tracking-[0.2em] text-white/25">
+                    {project.number ?? String(index + 1).padStart(2, "0")}
                   </span>
+                </div>
+
+                {/* TITLE */}
+
+                <div className="mb-5 lg:mb-0">
+                  <div className="mb-2.5">
+                    <span className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-cyan-400/55">
+                      {project.category ?? "Robotics"}
+                    </span>
+                  </div>
+
+                  <h3 className="text-[21px] font-medium leading-tight tracking-[-0.025em] text-white/80 transition-colors duration-300 group-hover:text-white sm:text-2xl">
+                    {project.title}
+                  </h3>
+                </div>
+
+                {/* DESCRIPTION */}
+
+                <div className="mb-6 lg:mb-0">
+                  <p className="max-w-lg text-[14px] leading-7 text-white/40 transition-colors duration-300 group-hover:text-white/55 sm:text-[15px]">
+                    {project.description ?? "Project description unavailable."}
+                  </p>
+                </div>
+
+                {/* DOCUMENTATION */}
+
+                <div className="flex items-center justify-start lg:justify-end">
+
+                  {project.document ? (
+                    project.status === "available" ? (
+                      <a
+                        href={project.document}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group/link flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.025] px-5 py-3 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-white/55 transition-all duration-300 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06] hover:text-cyan-300"
+                      >
+                        <FileText
+                          size={15}
+                          strokeWidth={1.3}
+                        />
+
+                        <span>
+                          Documentation
+                        </span>
+
+                        <ExternalLink
+                          size={13}
+                          strokeWidth={1.3}
+                          className="transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
+                        />
+                      </a>
+                    ) : (
+                      <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/20">
+                        <FileText
+                          size={14}
+                          strokeWidth={1.2}
+                        />
+
+                        Documentation unavailable
+                      </span>
+                    )
+                  ) : (
+                    <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/20">
+                      Details unavailable
+                    </span>
+                  )}
 
                 </div>
 
-                <h3 className="text-[21px] font-medium leading-tight tracking-[-0.025em] text-white/80 transition-colors duration-300 group-hover:text-white sm:text-2xl">
-                  {project.title}
-                </h3>
+                {/* MOBILE ACCENT */}
 
-              </div>
+                <div className="mt-7 h-px w-0 bg-cyan-400/50 transition-all duration-500 group-hover:w-12 lg:hidden" />
 
-              {/* ======================================================
-                  DESCRIPTION
-              ====================================================== */}
-
-              <div className="mb-6 lg:mb-0">
-
-                <p className="max-w-lg text-[14px] leading-7 text-white/40 transition-colors duration-300 group-hover:text-white/55 sm:text-[15px]">
-                  {project.description}
-                </p>
-
-              </div>
-
-              {/* ======================================================
-                  DOCUMENTATION
-              ====================================================== */}
-
-              <div className="flex items-center justify-start lg:justify-end">
-
-                {project.document ? (
-
-                  project.status === "available" ? (
-
-                    <a
-                      href={project.document}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/link flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.025] px-5 py-3 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-white/55 transition-all duration-300 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06] hover:text-cyan-300"
-                    >
-
-                      <FileText
-                        size={15}
-                        strokeWidth={1.3}
-                      />
-
-                      <span>
-                        Documentation
-                      </span>
-
-                      <ExternalLink
-                        size={13}
-                        strokeWidth={1.3}
-                        className="transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
-                      />
-
-                    </a>
-
-                  ) : (
-
-                    <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/20">
-
-                      <FileText
-                        size={14}
-                        strokeWidth={1.2}
-                      />
-
-                      Documentation unavailable
-
-                    </span>
-
-                  )
-
-                ) : (
-
-                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/20">
-                    Details unavailable
-                  </span>
-
-                )}
-
-              </div>
-
-              {/* ======================================================
-                  MOBILE ACCENT
-              ====================================================== */}
-
-              <div className="mt-7 h-px w-0 bg-cyan-400/50 transition-all duration-500 group-hover:w-12 lg:hidden" />
-
-            </motion.article>
-          ))}
+              </motion.article>
+            ))
+          )}
 
         </div>
 
@@ -267,7 +245,6 @@ export default function ProjectsSection() {
           }}
           className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
         >
-
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/20">
             Robotics Club / Project Archive
           </p>
@@ -276,7 +253,6 @@ export default function ProjectsSection() {
             href="#contact"
             className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/30 transition-colors duration-300 hover:text-cyan-300"
           >
-
             Have a project idea?
 
             <ArrowUpRight
@@ -284,9 +260,7 @@ export default function ProjectsSection() {
               strokeWidth={1.2}
               className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
             />
-
           </a>
-
         </motion.div>
 
       </div>
