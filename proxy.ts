@@ -6,7 +6,9 @@ export async function proxy(request: NextRequest) {
     request,
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
+
   const supabaseKey =
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -24,18 +26,37 @@ export async function proxy(request: NextRequest) {
         },
 
         setAll(cookiesToSet) {
+          /*
+           * Update the request cookies so the current
+           * server request can see the refreshed session.
+           */
           cookiesToSet.forEach(
             ({ name, value }) => {
-              request.cookies.set(name, value);
+              request.cookies.set(
+                name,
+                value
+              );
             }
           );
 
+          /*
+           * Create the response again with the
+           * updated request cookies.
+           */
           response = NextResponse.next({
             request,
           });
 
+          /*
+           * Persist refreshed Supabase cookies
+           * in the browser.
+           */
           cookiesToSet.forEach(
-            ({ name, value, options }) => {
+            ({
+              name,
+              value,
+              options,
+            }) => {
               response.cookies.set(
                 name,
                 value,
@@ -50,8 +71,8 @@ export async function proxy(request: NextRequest) {
 
   /*
    * IMPORTANT:
-   * Refresh the Supabase session before
-   * doing anything with authentication.
+   * Always refresh/check the Supabase session
+   * before returning the response.
    */
   await supabase.auth.getUser();
 
@@ -61,12 +82,9 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Run on all application routes except:
-     * - _next
-     * - static files
-     * - images
+     * Run for application routes.
+     * Ignore Next internals and static assets.
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)",
   ],
 };
-

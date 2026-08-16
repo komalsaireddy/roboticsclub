@@ -30,12 +30,16 @@ export default function BootSequence({
     };
   }, [onComplete]);
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <motion.div
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black"
-      initial={{ opacity: 1 }}
+      initial={{
+        opacity: 1,
+      }}
       animate={{
         opacity: exiting ? 0 : 1,
         scale: exiting ? 1.04 : 1,
@@ -45,7 +49,10 @@ export default function BootSequence({
         ease: [0.76, 0, 0.24, 1],
       }}
     >
-      {/* Ambient center glow */}
+      {/* ============================================================
+          AMBIENT CENTER GLOW
+      ============================================================ */}
+
       <motion.div
         className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         initial={{
@@ -67,8 +74,16 @@ export default function BootSequence({
         }}
       />
 
-      {/* Center logo */}
+      {/* ============================================================
+          CENTER CONTENT
+      ============================================================ */}
+
       <div className="relative z-10 flex flex-col items-center">
+
+        {/* ==========================================================
+            LOGO
+        ========================================================== */}
+
         <motion.div
           initial={{
             opacity: 0,
@@ -87,7 +102,9 @@ export default function BootSequence({
           }}
           className="relative"
         >
+
           {/* Logo glow */}
+
           <motion.div
             className="absolute inset-0 rounded-full"
             initial={{
@@ -111,6 +128,7 @@ export default function BootSequence({
           />
 
           {/* Floating logo */}
+
           <motion.div
             animate={{
               y: [0, -3, 0],
@@ -123,16 +141,20 @@ export default function BootSequence({
           >
             <Image
               src="/robotics-club-logo.jpg"
-              alt="Robotics Club"
-              width={180}
-              height={180}
+              alt="Robotics Club GCET"
+              width={200}
+              height={200}
               priority
-              className="relative h-36 w-36 object-contain md:h-44 md:w-44"
+              className="relative h-40 w-40 object-contain md:h-48 md:w-48"
             />
           </motion.div>
+
         </motion.div>
 
-        {/* Club name */}
+        {/* ==========================================================
+            CLUB NAME
+        ========================================================== */}
+
         <motion.div
           className="mt-8 text-center"
           initial={{
@@ -149,6 +171,7 @@ export default function BootSequence({
             ease: [0.16, 1, 0.3, 1],
           }}
         >
+
           <h1 className="font-mono text-sm font-medium uppercase tracking-[0.45em] text-white md:text-base">
             Robotics Club
           </h1>
@@ -168,8 +191,11 @@ export default function BootSequence({
           >
             Geetanjali College of Engineering & Technology
           </motion.p>
+
         </motion.div>
+
       </div>
+
     </motion.div>
   );
 }

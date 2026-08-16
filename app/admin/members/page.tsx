@@ -8,6 +8,8 @@ import AccessDenied from "@/components/admin/AccessDenied";
 
 import {
   updateMember,
+  approveMembershipRequest,
+  rejectMembershipRequest,
 } from "./actions";
 
 export default async function AdminMembersPage() {
@@ -23,31 +25,6 @@ export default async function AdminMembersPage() {
   }
 
   /* ============================================================
-     CURRENT USER
-  ============================================================ */
-
-  const {
-    data: profile,
-  } = await supabase
-    .from("profiles")
-    .select(`
-      full_name,
-      avatar_url,
-      role:roles (
-        name,
-        rank,
-        color
-      )
-    `)
-    .eq("id", user.id)
-    .single();
-
-  const currentRole =
-    Array.isArray(profile?.role)
-      ? profile.role[0]
-      : profile?.role;
-
-  /* ============================================================
      PERMISSION
   ============================================================ */
 
@@ -61,19 +38,17 @@ export default async function AdminMembersPage() {
     }
   );
 
-  if (
-    permissionError ||
-    !allowed
-  ) {
+  if (permissionError || !allowed) {
     return <AccessDenied />;
   }
 
   /* ============================================================
-     LOAD MEMBERS
+     EXISTING MEMBERS
   ============================================================ */
 
   const {
     data: members,
+    error: membersError,
   } =
     await supabase
       .from("profiles")
@@ -96,11 +71,12 @@ export default async function AdminMembersPage() {
       });
 
   /* ============================================================
-     LOAD ROLES
+     ROLES
   ============================================================ */
 
   const {
     data: roles,
+    error: rolesError,
   } =
     await supabase
       .from("roles")
@@ -111,18 +87,44 @@ export default async function AdminMembersPage() {
         ascending: false,
       });
 
+  /* ============================================================
+     PENDING REQUESTS
+  ============================================================ */
+
+  const {
+    data: requests,
+    error: requestsError,
+  } =
+    await supabase
+      .from("membership_requests")
+      .select(`
+        id,
+        user_id,
+        full_name,
+        email,
+        status,
+        created_at
+      `)
+      .eq("status", "pending")
+      .order("created_at", {
+        ascending: true,
+      });
+
   const memberList =
     members ?? [];
 
   const roleList =
     roles ?? [];
 
+  const requestList =
+    requests ?? [];
+
   return (
     <main className="min-h-screen bg-[#030303] text-white">
 
-      {/* ========================================================
+      {/* ==========================================================
           HEADER
-      ======================================================== */}
+      ========================================================== */}
 
       <header className="border-b border-white/[0.08]">
 
@@ -145,356 +147,361 @@ export default async function AdminMembersPage() {
               </p>
 
               <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.25em] text-white/25">
-                Management Portal
+                Members / Management
               </p>
 
             </div>
 
           </div>
 
-          <div className="flex items-center gap-5">
-
-            <div className="hidden text-right sm:block">
-
-              <p className="text-sm text-white/70">
-                {profile?.full_name ??
-                  user.email}
-              </p>
-
-              <p
-                className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em]"
-                style={{
-                  color:
-                    currentRole?.color ??
-                    "#888780",
-                }}
-              >
-                {currentRole?.name ??
-                  "Member"}
-              </p>
-
-            </div>
-
-            <form
-              action="/auth/signout"
-              method="post"
-            >
-              <button
-                type="submit"
-                className="border border-white/[0.1] px-4 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:border-white/20 hover:text-white"
-              >
-                Sign out
-              </button>
-            </form>
-
-          </div>
+          <a
+            href="/admin"
+            className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/35 transition-colors hover:text-cyan-300"
+          >
+            ← Dashboard
+          </a>
 
         </div>
 
       </header>
 
-      {/* ========================================================
-          MAIN LAYOUT
-      ======================================================== */}
+      {/* ==========================================================
+          CONTENT
+      ========================================================== */}
 
-      <div className="mx-auto flex min-h-[calc(100vh-80px)] max-w-[1600px]">
+      <div className="mx-auto max-w-[1600px] px-6 py-10 lg:px-10">
 
-        {/* ======================================================
-            SIDEBAR
-        ====================================================== */}
+        {/* ========================================================
+            TITLE
+        ======================================================== */}
 
-        <aside className="hidden w-64 shrink-0 border-r border-white/[0.08] lg:block">
+        <div className="mb-10">
 
-          <nav className="sticky top-0 p-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan-400/60">
+            Access Control
+          </p>
 
-            <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.25em] text-white/20">
-              Control Center
-            </p>
+          <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em]">
+            Members
+          </h1>
 
-            <div className="space-y-1">
+          <p className="mt-3 max-w-xl text-[16px] leading-7 text-white/40">
+            Manage existing accounts, review membership
+            requests and assign roles.
+          </p>
 
-              <a
-                href="/admin"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Dashboard
-              </a>
+        </div>
 
-              <a
-                href="/admin/projects"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Projects
-              </a>
+        {/* ========================================================
+            PENDING REQUESTS
+        ======================================================== */}
 
-              <a
-                href="/admin/events"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Events
-              </a>
+        <section className="mb-10 border border-white/[0.08]">
 
-              <a
-                href="/admin/gallery"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Gallery
-              </a>
+          <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-5">
 
-              <a
-                href="/admin/updates"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Updates
-              </a>
+            <div>
 
-              <a
-                href="/admin/team"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Team
-              </a>
+              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-cyan-300/60">
+                Membership Requests
+              </p>
 
-              <div className="my-6 h-px bg-white/[0.06]" />
-
-              <a
-                href="/admin/members"
-                className="block border-l border-cyan-400 bg-white/[0.04] px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white"
-              >
-                Members
-              </a>
-
-              <a
-                href="/admin/roles"
-                className="block px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 transition-colors hover:bg-white/[0.03] hover:text-white"
-              >
-                Roles & Permissions
-              </a>
+              <h2 className="mt-2 text-xl font-medium text-white/80">
+                Pending Approval
+              </h2>
 
             </div>
 
-          </nav>
-
-        </aside>
-
-        {/* ======================================================
-            CONTENT
-        ====================================================== */}
-
-        <section className="min-w-0 flex-1 px-6 py-10 lg:px-10 lg:py-12">
-
-          <div className="mb-10">
-
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan-400/70">
-              Access Control
-            </p>
-
-            <h1 className="mt-3 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
-              Members
-            </h1>
-
-            <p className="mt-4 max-w-xl text-sm leading-7 text-white/35">
-              Manage existing accounts and
-              assign roles across the Robotics
-              Club management system.
-            </p>
+            <span className="flex h-8 min-w-8 items-center justify-center rounded-full border border-cyan-300/20 bg-cyan-300/[0.04] px-3 font-mono text-[10px] text-cyan-200/70">
+              {requestList.length}
+            </span>
 
           </div>
 
-          {/* ====================================================
-              MEMBERS
-          ==================================================== */}
+          {requestsError ? (
 
-          <section className="border border-white/[0.08]">
+            <div className="p-6 text-sm text-red-300/70">
+              Failed to load membership requests.
+            </div>
 
-            <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-5">
+          ) : requestList.length === 0 ? (
 
-              <div>
+            <div className="p-10 text-center">
 
-                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-cyan-400/60">
-                  Member Directory
-                </p>
+              <p className="text-sm text-white/30">
+                No pending membership requests.
+              </p>
 
-                <p className="mt-2 text-lg text-white/75">
-                  {memberList.length}{" "}
-                  {memberList.length === 1
-                    ? "Member"
-                    : "Members"}
-                </p>
-
-              </div>
-
-              <div className="font-mono text-[9px] uppercase tracking-[0.15em] text-white/20">
-                Role Management
-              </div>
+              <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.15em] text-white/15">
+                New registrations will appear here
+              </p>
 
             </div>
 
+          ) : (
+
             <div className="divide-y divide-white/[0.06]">
 
-              {memberList.length === 0 ? (
+              {requestList.map(
+                (request) => (
 
-                <div className="p-12 text-center">
+                  <div
+                    key={request.id}
+                    className="grid gap-6 px-6 py-6 lg:grid-cols-[1fr_1fr_auto] lg:items-center"
+                  >
 
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/25">
-                    No member profiles found
-                  </p>
+                    {/* MEMBER */}
 
-                </div>
+                    <div>
 
-              ) : (
+                      <p className="text-[17px] font-medium text-white/80">
+                        {request.full_name}
+                      </p>
 
-                memberList.map(
-                  (member) => {
+                      <p className="mt-1 text-sm text-white/35">
+                        {request.email}
+                      </p>
 
-                    const role =
-                      Array.isArray(
-                        member.roles
-                      )
-                        ? member.roles[0]
-                        : member.roles;
+                    </div>
 
-                    return (
+                    {/* DETAILS */}
+
+                    <div>
+
+                      <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-white/20">
+                        Requested
+                      </p>
+
+                      <p className="mt-1 text-sm text-white/35">
+                        {new Date(
+                          request.created_at
+                        ).toLocaleString()}
+                      </p>
+
+                    </div>
+
+                    {/* ACTIONS */}
+
+                    <div className="flex flex-wrap gap-2">
 
                       <form
-                        key={member.id}
                         action={
-                          updateMember
+                          approveMembershipRequest
                         }
-                        className="grid gap-5 px-6 py-7 lg:grid-cols-[1fr_1fr_220px_auto] lg:items-end"
                       >
 
                         <input
                           type="hidden"
-                          name="id"
-                          value={
-                            member.id
-                          }
+                          name="request_id"
+                          value={request.id}
                         />
-
-                        <div>
-
-                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                            Name
-                          </label>
-
-                          <input
-                            name="full_name"
-                            defaultValue={
-                              member.full_name ??
-                              ""
-                            }
-                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none transition-colors focus:border-cyan-400/40"
-                          />
-
-                        </div>
-
-                        <div>
-
-                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                            Avatar URL
-                          </label>
-
-                          <input
-                            name="avatar_url"
-                            defaultValue={
-                              member.avatar_url ??
-                              ""
-                            }
-                            placeholder="https://..."
-                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none placeholder:text-white/10 transition-colors focus:border-cyan-400/40"
-                          />
-
-                        </div>
-
-                        <div>
-
-                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                            Role
-                          </label>
-
-                          <select
-                            name="role_id"
-                            defaultValue={
-                              member.role_id ??
-                              ""
-                            }
-                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none transition-colors focus:border-cyan-400/40"
-                          >
-
-                            <option value="">
-                              Select role
-                            </option>
-
-                            {roleList.map(
-                              (item) => (
-                                <option
-                                  key={
-                                    item.id
-                                  }
-                                  value={
-                                    item.id
-                                  }
-                                >
-                                  {
-                                    item.name
-                                  }{" "}
-                                  — Rank{" "}
-                                  {
-                                    item.rank
-                                  }
-                                </option>
-                              )
-                            )}
-
-                          </select>
-
-                        </div>
 
                         <button
                           type="submit"
-                          className="h-11 bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300"
+                          className="h-10 border border-cyan-300/20 bg-cyan-300/[0.04] px-5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-cyan-200 transition-colors hover:border-cyan-300/50 hover:bg-cyan-300/[0.08]"
                         >
-                          Save
+                          Approve
                         </button>
-
-                        <div className="border-t border-white/[0.05] pt-4 lg:col-span-4">
-
-                          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-
-                            <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/15">
-                              ID:{" "}
-                              {member.id}
-                            </p>
-
-                            <p
-                              className="font-mono text-[9px] uppercase tracking-[0.12em]"
-                              style={{
-                                color:
-                                  role?.color ??
-                                  "#888780",
-                              }}
-                            >
-                              Current Role:{" "}
-                              {role?.name ??
-                                "Unassigned"}
-                            </p>
-
-                          </div>
-
-                        </div>
 
                       </form>
 
-                    );
-                  }
-                )
+                      <form
+                        action={
+                          rejectMembershipRequest
+                        }
+                      >
 
+                        <input
+                          type="hidden"
+                          name="request_id"
+                          value={request.id}
+                        />
+
+                        <button
+                          type="submit"
+                          className="h-10 border border-red-400/15 px-5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300/60 transition-colors hover:border-red-400/40 hover:text-red-300"
+                        >
+                          Reject
+                        </button>
+
+                      </form>
+
+                    </div>
+
+                  </div>
+
+                )
               )}
 
             </div>
 
-          </section>
+          )}
+
+        </section>
+
+        {/* ========================================================
+            EXISTING MEMBERS
+        ======================================================== */}
+
+        <section className="border border-white/[0.08]">
+
+          <div className="border-b border-white/[0.08] px-6 py-5">
+
+            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/30">
+              {memberList.length} Members
+            </p>
+
+          </div>
+
+          <div className="divide-y divide-white/[0.06]">
+
+            {memberList.length === 0 ? (
+
+              <div className="p-10 text-center text-white/25">
+                No member profiles found.
+              </div>
+
+            ) : (
+
+              memberList.map(
+                (member) => {
+
+                  const role =
+                    Array.isArray(
+                      member.roles
+                    )
+                      ? member.roles[0]
+                      : member.roles;
+
+                  return (
+
+                    <form
+                      key={member.id}
+                      action={updateMember}
+                      className="grid gap-5 px-6 py-7 lg:grid-cols-[1fr_1fr_220px_auto] lg:items-end"
+                    >
+
+                      <input
+                        type="hidden"
+                        name="id"
+                        value={member.id}
+                      />
+
+                      {/* NAME */}
+
+                      <div>
+
+                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                          Name
+                        </label>
+
+                        <input
+                          name="full_name"
+                          defaultValue={
+                            member.full_name ?? ""
+                          }
+                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
+                        />
+
+                      </div>
+
+                      {/* AVATAR */}
+
+                      <div>
+
+                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                          Avatar URL
+                        </label>
+
+                        <input
+                          name="avatar_url"
+                          defaultValue={
+                            member.avatar_url ?? ""
+                          }
+                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
+                        />
+
+                      </div>
+
+                      {/* ROLE */}
+
+                      <div>
+
+                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                          Role
+                        </label>
+
+                        <select
+                          name="role_id"
+                          defaultValue={
+                            member.role_id ?? ""
+                          }
+                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
+                        >
+
+                          <option value="">
+                            Select role
+                          </option>
+
+                          {roleList.map(
+                            (item) => (
+
+                              <option
+                                key={item.id}
+                                value={item.id}
+                              >
+                                {item.name} — Rank{" "}
+                                {item.rank}
+                              </option>
+
+                            )
+                          )}
+
+                        </select>
+
+                      </div>
+
+                      {/* SAVE */}
+
+                      <button
+                        type="submit"
+                        className="h-11 bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300"
+                      >
+                        Save
+                      </button>
+
+                      {/* DETAILS */}
+
+                      <div className="lg:col-span-4">
+
+                        <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/20">
+                          ID: {member.id}
+                        </p>
+
+                        <p
+                          className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em]"
+                          style={{
+                            color:
+                              role?.color ??
+                              "#888780",
+                          }}
+                        >
+                          Current Role:{" "}
+                          {role?.name ??
+                            "Unassigned"}
+                        </p>
+
+                      </div>
+
+                    </form>
+
+                  );
+                }
+              )
+
+            )}
+
+          </div>
 
         </section>
 

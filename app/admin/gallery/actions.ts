@@ -3,7 +3,13 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  createSupabaseServerClient,
+} from "@/lib/supabase/server";
+
+import {
+  createAuditLog,
+} from "@/lib/audit/log";
 
 /* ============================================================
    PERMISSION
@@ -115,7 +121,7 @@ export async function createGalleryImage(
     );
   }
 
-  const { error } =
+  const { data: created, error } =
     await supabase
       .from("gallery_images")
       .insert({
@@ -133,7 +139,11 @@ export async function createGalleryImage(
           isPublished,
         created_by:
           user.id,
-      });
+      })
+      .select(
+        "id, image_url, storage_path, caption, alt_text, event_id, sort_order, is_published"
+      )
+      .single();
 
   if (error) {
     console.error(
@@ -145,6 +155,35 @@ export async function createGalleryImage(
       error.message
     );
   }
+
+  await createAuditLog({
+    supabase,
+    userId: user.id,
+    action:
+      "gallery_image_created",
+    entityType:
+      "gallery_image",
+    entityId:
+      created.id,
+    description:
+      `Uploaded gallery image${caption ? `: ${caption}` : ""}`,
+    metadata: {
+      image_url:
+        created.image_url,
+      storage_path:
+        created.storage_path,
+      caption:
+        created.caption,
+      alt_text:
+        created.alt_text,
+      event_id:
+        created.event_id,
+      sort_order:
+        created.sort_order,
+      is_published:
+        created.is_published,
+    },
+  });
 
   revalidatePath("/");
   revalidatePath("/admin");
@@ -162,6 +201,7 @@ export async function updateGalleryImage(
 ): Promise<void> {
   const {
     supabase,
+    user,
   } =
     await requireGalleryPermission();
 
@@ -230,9 +270,16 @@ export async function updateGalleryImage(
   } =
     await supabase
       .from("gallery_images")
-      .select(
-        "id, storage_path"
-      )
+      .select(`
+        id,
+        image_url,
+        storage_path,
+        caption,
+        alt_text,
+        event_id,
+        sort_order,
+        is_published
+      `)
       .eq("id", id)
       .maybeSingle();
 
@@ -248,7 +295,10 @@ export async function updateGalleryImage(
     );
   }
 
-  const { error } =
+  const {
+    data: updated,
+    error,
+  } =
     await supabase
       .from("gallery_images")
       .update({
@@ -271,7 +321,18 @@ export async function updateGalleryImage(
         updated_at:
           new Date().toISOString(),
       })
-      .eq("id", id);
+      .eq("id", id)
+      .select(`
+        id,
+        image_url,
+        storage_path,
+        caption,
+        alt_text,
+        event_id,
+        sort_order,
+        is_published
+      `)
+      .single();
 
   if (error) {
     throw new Error(
@@ -283,6 +344,9 @@ export async function updateGalleryImage(
    * Remove old file only when
    * a new file was uploaded.
    */
+
+  let oldFileDeleted =
+    false;
 
   if (
     storagePath &&
@@ -304,8 +368,91 @@ export async function updateGalleryImage(
         "Old image cleanup failed:",
         storageError
       );
+    } else {
+      oldFileDeleted = true;
     }
   }
+
+  await createAuditLog({
+    supabase,
+    userId: user.id,
+    action:
+      "gallery_image_updated",
+    entityType:
+      "gallery_image",
+    entityId:
+      id,
+    description:
+      `Updated gallery image${updated.caption ? `: ${updated.caption}` : ""}`,
+    metadata: {
+      changes: {
+        image_changed:
+          existing.image_url !==
+          updated.image_url,
+
+        storage_file_changed:
+          existing.storage_path !==
+          updated.storage_path,
+
+        caption_changed:
+          existing.caption !==
+          updated.caption,
+
+        alt_text_changed:
+          existing.alt_text !==
+          updated.alt_text,
+
+        event_changed:
+          existing.event_id !==
+          updated.event_id,
+
+        sort_order_changed:
+          existing.sort_order !==
+          updated.sort_order,
+
+        published_changed:
+          existing.is_published !==
+          updated.is_published,
+      },
+
+      before: {
+        image_url:
+          existing.image_url,
+        storage_path:
+          existing.storage_path,
+        caption:
+          existing.caption,
+        alt_text:
+          existing.alt_text,
+        event_id:
+          existing.event_id,
+        sort_order:
+          existing.sort_order,
+        is_published:
+          existing.is_published,
+      },
+
+      after: {
+        image_url:
+          updated.image_url,
+        storage_path:
+          updated.storage_path,
+        caption:
+          updated.caption,
+        alt_text:
+          updated.alt_text,
+        event_id:
+          updated.event_id,
+        sort_order:
+          updated.sort_order,
+        is_published:
+          updated.is_published,
+      },
+
+      old_storage_file_deleted:
+        oldFileDeleted,
+    },
+  });
 
   revalidatePath("/");
   revalidatePath("/admin");
@@ -323,6 +470,7 @@ export async function deleteGalleryImage(
 ): Promise<void> {
   const {
     supabase,
+    user,
   } =
     await requireGalleryPermission();
 
@@ -342,9 +490,16 @@ export async function deleteGalleryImage(
   } =
     await supabase
       .from("gallery_images")
-      .select(
-        "id, storage_path"
-      )
+      .select(`
+        id,
+        image_url,
+        storage_path,
+        caption,
+        alt_text,
+        event_id,
+        sort_order,
+        is_published
+      `)
       .eq("id", id)
       .maybeSingle();
 
@@ -402,6 +557,49 @@ export async function deleteGalleryImage(
       error.message
     );
   }
+
+  /*
+   * IMPORTANT:
+   * Log the deletion AFTER the
+   * gallery record has successfully
+   * been deleted.
+   */
+
+  await createAuditLog({
+    supabase,
+    userId: user.id,
+    action:
+      "gallery_image_deleted",
+    entityType:
+      "gallery_image",
+    entityId:
+      id,
+    description:
+      `Deleted gallery image${existing.caption ? `: ${existing.caption}` : ""}`,
+    metadata: {
+      deleted_record: {
+        image_url:
+          existing.image_url,
+        storage_path:
+          existing.storage_path,
+        caption:
+          existing.caption,
+        alt_text:
+          existing.alt_text,
+        event_id:
+          existing.event_id,
+        sort_order:
+          existing.sort_order,
+        is_published:
+          existing.is_published,
+      },
+
+      storage_file_deleted:
+        Boolean(
+          existing.storage_path
+        ),
+    },
+  });
 
   revalidatePath("/");
   revalidatePath("/admin");
