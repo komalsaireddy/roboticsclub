@@ -1,450 +1,369 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import { motion } from "motion/react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useEffect, useState } from "react";
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const smoothX = useSpring(mouseX, {
-    stiffness: 80,
-    damping: 20,
-  });
-
-  const smoothY = useSpring(mouseY, {
-    stiffness: 80,
-    damping: 20,
-  });
-
-  const rotateX = useTransform(smoothY, [-500, 500], [6, -6]);
-  const rotateY = useTransform(smoothX, [-500, 500], [-6, 6]);
-
-  const coreX = useTransform(smoothX, [-500, 500], [-12, 12]);
-  const coreY = useTransform(smoothY, [-500, 500], [-12, 12]);
-
-  useEffect(() => {
-    setMounted(true);
-
-    const handleMouseMove = (event: MouseEvent) => {
-      mouseX.set(event.clientX - window.innerWidth / 2);
-      mouseY.set(event.clientY - window.innerHeight / 2);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [mouseX, mouseY]);
-
-  if (!mounted) {
-    return (
-      <section
-        id="home"
-        className="relative flex min-h-screen items-center justify-center px-6"
-      />
-    );
-  }
-
   return (
     <section
-      id="home"
-      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-24"
+      id="hero"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 pt-28 sm:px-10 lg:px-16"
     >
-      {/* ========================================================
-          HERO ATMOSPHERE
-      ======================================================== */}
+      <div className="mx-auto w-full max-w-7xl">
 
-      <motion.div
-        className="pointer-events-none absolute left-1/2 top-[46%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.4, 0.7, 0.4],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          background:
-            "radial-gradient(circle, rgba(0,200,255,0.08), rgba(0,120,180,0.025) 40%, transparent 70%)",
-          filter: "blur(35px)",
-        }}
-      />
+        {/* ============================================================
+            HERO CONTENT
+        ============================================================ */}
 
-      {/* ========================================================
-          MAIN CONTENT
-      ======================================================== */}
+        <div className="relative z-20">
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl">
+          {/* Eyebrow */}
 
-        {/* ======================================================
-            TECHNICAL LABEL
-        ====================================================== */}
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 18,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.8,
-            delay: 0.15,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-          className="mb-7 flex items-center gap-3"
-        >
-          <span className="h-px w-8 bg-cyan-400/70" />
-
-          <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-cyan-400/80">
-            Robotics Club · GCET
-          </span>
-
-          <span className="hidden h-px w-8 bg-cyan-400/30 sm:block" />
-        </motion.div>
-
-        {/* ======================================================
-            HERO TITLE
-        ====================================================== */}
-
-        <div className="relative max-w-6xl">
-          <motion.h1
+          <motion.div
             initial={{
               opacity: 0,
-              y: 50,
-              filter: "blur(12px)",
+              y: 20,
             }}
             animate={{
               opacity: 1,
               y: 0,
-              filter: "blur(0px)",
             }}
             transition={{
-              duration: 1.1,
-              delay: 0.3,
+              duration: 0.8,
+              delay: 0.2,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="font-semibold leading-[0.87] tracking-[-0.055em]"
+            className="mb-8 flex items-center gap-3 sm:mb-10"
           >
-            <span className="block text-[clamp(4rem,11vw,10rem)] text-white">
+            <span className="h-px w-8 bg-cyan-400/70 sm:w-12" />
+
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-cyan-300/80">
+              Robotics Club
+            </span>
+
+            <span className="text-sm text-cyan-300/30">
+              ·
+            </span>
+
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-cyan-300/70">
+              GCET
+            </span>
+
+            <span className="h-px w-8 bg-cyan-400/30 sm:w-12" />
+          </motion.div>
+
+          {/* ============================================================
+              MAIN TITLE
+          ============================================================ */}
+
+          <div className="relative">
+
+            <motion.h1
+              initial={{
+                opacity: 0,
+                y: 70,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 1,
+                delay: 0.35,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="whitespace-nowrap text-[clamp(3rem,7.2vw,7rem)] font-semibold leading-[0.86] tracking-[-0.065em] text-white"
+            >
               ENGINEERING
-            </span>
+            </motion.h1>
 
-            <span className="mt-2 block text-[clamp(4rem,11vw,10rem)] text-white/[0.28]">
+            <motion.h2
+              initial={{
+                opacity: 0,
+                y: 70,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 1,
+                delay: 0.48,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="whitespace-nowrap text-[clamp(3rem,7.2vw,7rem)] font-semibold leading-[0.90] tracking-[-0.065em] text-white/[0.27]"
+            >
               THE FUTURE.
-            </span>
-          </motion.h1>
+            </motion.h2>
 
-          {/* Accent line */}
+            {/* Soft title glow */}
 
-          <motion.div
-            initial={{
-              width: 0,
-              opacity: 0,
-            }}
-            animate={{
-              width: "clamp(100px, 15vw, 220px)",
-              opacity: 1,
-            }}
-            transition={{
-              duration: 1,
-              delay: 0.85,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="mt-7 h-px bg-gradient-to-r from-cyan-400/70 to-transparent"
-          />
+            <motion.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              transition={{
+                duration: 2,
+                delay: 0.8,
+              }}
+              className="pointer-events-none absolute left-[35%] top-[35%] -z-10 h-48 w-48 rounded-full bg-cyan-400/[0.035] blur-[100px] sm:h-72 sm:w-72"
+            />
+          </div>
+
+          {/* ============================================================
+              LOWER CONTENT
+          ============================================================ */}
+
+          <div className="mt-10 grid gap-10 sm:mt-12 lg:grid-cols-[1fr_auto] lg:items-end">
+
+            {/* Description */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.8,
+                delay: 0.75,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="max-w-2xl"
+            >
+              <div className="mb-7 h-px w-16 bg-cyan-400/60" />
+
+              <p className="text-[15px] leading-7 text-white/50 sm:text-[16px] sm:leading-8">
+                Building intelligent machines, autonomous systems, and the
+                next generation of engineers through experimentation,
+                competition and collaboration.
+              </p>
+            </motion.div>
+
+            {/* ============================================================
+                BUTTONS
+            ============================================================ */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 25,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.8,
+                delay: 0.9,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative z-30 flex flex-wrap gap-3"
+            >
+
+              {/* Explore Club */}
+
+              <a
+                href="#about"
+                aria-label="Explore Robotics Club"
+                className="group relative z-30 inline-flex h-12 min-w-[175px] items-center justify-center gap-3 rounded-full bg-white px-7 font-mono text-[11px] font-semibold uppercase tracking-[0.20em] text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-300 hover:shadow-[0_0_35px_rgba(103,232,249,0.18)]"
+              >
+                <span className="text-black">
+                  Explore Club
+                </span>
+
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.8}
+                  className="text-black transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </a>
+
+              {/* Our Projects */}
+
+              <a
+                href="#projects"
+                aria-label="View Robotics Club Projects"
+                className="group relative z-30 inline-flex h-12 min-w-[175px] items-center justify-center gap-3 rounded-full border border-white/[0.12] bg-white/[0.025] px-7 font-mono text-[11px] font-medium uppercase tracking-[0.20em] text-white/60 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:bg-white/[0.05] hover:text-white"
+              >
+                <span>
+                  Our Projects
+                </span>
+
+                <ArrowUpRight
+                  size={16}
+                  strokeWidth={1.4}
+                  className="text-white/30 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cyan-300"
+                />
+              </a>
+
+            </motion.div>
+          </div>
         </div>
 
-        {/* ======================================================
-            DESCRIPTION + ACTIONS
-        ====================================================== */}
+        {/* ============================================================
+            RADAR
+        ============================================================ */}
 
         <motion.div
           initial={{
             opacity: 0,
-            y: 25,
+            scale: 0.85,
           }}
           animate={{
             opacity: 1,
-            y: 0,
+            scale: 1,
           }}
           transition={{
-            duration: 0.8,
-            delay: 1,
+            duration: 1.4,
+            delay: 0.7,
             ease: [0.16, 1, 0.3, 1],
           }}
-          className="mt-8 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between"
+          className="pointer-events-none absolute bottom-[6%] right-[-3%] z-0 hidden h-[420px] w-[420px] lg:block xl:h-[500px] xl:w-[500px]"
+          aria-hidden="true"
         >
-          <p className="max-w-md text-sm leading-7 text-white/45 sm:text-base">
-            Building intelligent machines, autonomous systems, and the next
-            generation of engineers through experimentation, competition and
-            collaboration.
-          </p>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="#about"
-              className="group flex items-center gap-3 rounded-full bg-white px-6 py-3.5 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-cyan-300"
-            >
-              Explore Club
+          {/* Rings */}
 
-              <ArrowUpRight
-                size={14}
-                strokeWidth={1.7}
-                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              />
-            </a>
+          <div className="absolute inset-0 rounded-full border border-cyan-300/[0.08]" />
 
-            <a
-              href="#projects"
-              className="group flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-6 py-3.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/70 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.07] hover:text-white"
-            >
-              Our Projects
-            </a>
-          </div>
-        </motion.div>
+          <div className="absolute inset-[10%] rounded-full border border-cyan-300/[0.08]" />
 
-        {/* ======================================================
-            ROBOTICS CORE
-        ====================================================== */}
+          <div className="absolute inset-[20%] rounded-full border border-cyan-300/[0.1]" />
 
-        <motion.div
-          className="pointer-events-none absolute right-[-2%] top-[28%] hidden h-[460px] w-[460px] lg:block"
-          style={{
-            rotateX,
-            rotateY,
-          }}
-        >
-          {/* Outer orbital ring */}
+          <div className="absolute inset-[30%] rounded-full border border-cyan-300/[0.12]" />
+
+          <div className="absolute inset-[40%] rounded-full border border-cyan-300/[0.13]" />
+
+          {/* Crosshair */}
+
+          <div className="absolute left-1/2 top-[12%] h-[76%] w-px -translate-x-1/2 bg-cyan-300/[0.07]" />
+
+          <div className="absolute left-[12%] top-1/2 h-px w-[76%] -translate-y-1/2 bg-cyan-300/[0.07]" />
+
+          {/* Center */}
+
+          <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/[0.16]" />
+
+          <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" />
 
           <motion.div
-            className="absolute inset-[8%] rounded-full border border-cyan-400/[0.10]"
             animate={{
-              rotate: 360,
+              scale: [0.8, 1.15, 0.8],
+              opacity: [0.55, 1, 0.55],
             }}
             transition={{
-              duration: 35,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Second ring */}
-
-          <motion.div
-            className="absolute inset-[18%] rounded-full border border-white/[0.07]"
-            animate={{
-              rotate: -360,
-            }}
-            transition={{
-              duration: 24,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Third ring */}
-
-          <motion.div
-            className="absolute inset-[28%] rounded-full border border-cyan-400/[0.12]"
-            animate={{
-              rotate: 360,
-            }}
-            transition={{
-              duration: 18,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Orbital accent 01 */}
-
-          <motion.div
-            className="absolute left-[13%] top-[38%] h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(103,232,249,0.8)]"
-            animate={{
-              scale: [0.7, 1.2, 0.7],
-              opacity: [0.4, 1, 0.4],
-            }}
-            transition={{
-              duration: 2.5,
+              duration: 2.2,
               repeat: Infinity,
               ease: "easeInOut",
             }}
+            className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/80 shadow-[0_0_25px_rgba(103,232,249,0.55)]"
           />
 
-          {/* Orbital accent 02 */}
+          {/* Radar sweep */}
 
           <motion.div
-            className="absolute right-[18%] top-[22%] h-1.5 w-1.5 rounded-full bg-white/70"
             animate={{
-              opacity: [0.2, 0.8, 0.2],
+              rotate: 360,
             }}
             transition={{
-              duration: 3,
+              duration: 8,
               repeat: Infinity,
+              ease: "linear",
             }}
+            className="absolute left-1/2 top-1/2 h-1/2 w-px origin-bottom bg-gradient-to-t from-cyan-300/60 to-transparent"
           />
 
-          {/* ====================================================
-              CENTRAL CORE
-          ==================================================== */}
+          {/* Radar points */}
 
           <motion.div
-            className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              x: coreX,
-              y: coreY,
+            animate={{
+              opacity: [0.25, 1, 0.25],
+              scale: [0.8, 1.15, 0.8],
             }}
-          >
-            {/* Core glow */}
+            transition={{
+              duration: 2.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute right-[15%] top-[18%] h-2 w-2 rounded-full bg-white"
+          />
 
-            <motion.div
-              className="absolute inset-[-35%] rounded-full"
-              animate={{
-                scale: [0.9, 1.1, 0.9],
-                opacity: [0.25, 0.5, 0.25],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(0,210,255,0.22), transparent 68%)",
-                filter: "blur(25px)",
-              }}
-            />
+          <motion.div
+            animate={{
+              opacity: [1, 0.3, 1],
+            }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute left-[20%] top-[45%] h-2 w-2 rounded-full bg-cyan-300"
+          />
 
-            {/* Core body */}
+          {/* Coordinates */}
 
-            <motion.div
-              className="absolute inset-[18%] rounded-full border border-cyan-300/20 bg-black/70 backdrop-blur-sm"
-              animate={{
-                rotate: 360,
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            >
-              <div className="absolute inset-[18%] rounded-full border border-white/[0.08]" />
-
-              <div className="absolute inset-[31%] rounded-full border border-cyan-300/20" />
-            </motion.div>
-
-            {/* Core center */}
-
-            <motion.div
-              className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300"
-              animate={{
-                scale: [0.75, 1, 0.75],
-                opacity: [0.7, 1, 0.7],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              style={{
-                boxShadow:
-                  "0 0 12px rgba(103,232,249,0.8), 0 0 45px rgba(0,180,255,0.35)",
-              }}
-            />
-
-            {/* Vertical crosshair */}
-
-            <div className="absolute left-1/2 top-[-12%] h-[124%] w-px -translate-x-1/2 bg-white/[0.08]" />
-
-            {/* Horizontal crosshair */}
-
-            <div className="absolute left-[-12%] top-1/2 h-px w-[124%] -translate-y-1/2 bg-white/[0.08]" />
-          </motion.div>
-
-          {/* Technical coordinates */}
-
-          <div className="absolute bottom-[8%] right-[4%] font-mono text-[8px] uppercase tracking-[0.22em] text-white/20">
+          <div className="absolute bottom-[2%] right-[4%] font-mono text-[10px] leading-5 tracking-[0.16em] text-white/[0.18]">
             X 07.421
             <br />
             Y 19.884
             <br />
             Z 04.112
+            <br />
+            RC / 001
           </div>
-
-          {/* Scanning line */}
-
-          <motion.div
-            className="absolute left-[18%] right-[18%] h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent"
-            animate={{
-              top: ["20%", "80%", "20%"],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
         </motion.div>
-      </div>
 
-      {/* ========================================================
-          SCROLL INDICATOR
-      ======================================================== */}
-
-      <motion.a
-        href="#about"
-        initial={{
-          opacity: 0,
-        }}
-        animate={{
-          opacity: 1,
-        }}
-        transition={{
-          duration: 1,
-          delay: 1.7,
-        }}
-        className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-3 text-white/25 transition-colors duration-300 hover:text-white/60"
-      >
-        <span className="font-mono text-[8px] uppercase tracking-[0.35em]">
-          Scroll
-        </span>
+        {/* ============================================================
+            SCROLL
+        ============================================================ */}
 
         <motion.div
+          initial={{
+            opacity: 0,
+          }}
           animate={{
-            y: [0, 6, 0],
+            opacity: 1,
           }}
           transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: "easeInOut",
+            duration: 0.8,
+            delay: 1.4,
           }}
+          className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2"
         >
-          <ArrowDown size={15} strokeWidth={1} />
+          <a
+            href="#about"
+            className="group flex flex-col items-center gap-3"
+          >
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/30 transition-colors duration-300 group-hover:text-cyan-300/70">
+              Scroll
+            </span>
+
+            <motion.span
+              animate={{
+                y: [0, 5, 0],
+              }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="text-white/30 transition-colors group-hover:text-cyan-300"
+            >
+              <ArrowDown
+                size={15}
+                strokeWidth={1.1}
+              />
+            </motion.span>
+          </a>
         </motion.div>
-      </motion.a>
 
-      {/* ========================================================
-          SIDE TECHNICAL MARKER
-      ======================================================== */}
-
-      <div className="absolute bottom-8 right-8 hidden font-mono text-[8px] uppercase tracking-[0.3em] text-white/15 lg:block">
-        RC / 001
       </div>
     </section>
   );

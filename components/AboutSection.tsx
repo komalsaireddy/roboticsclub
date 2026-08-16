@@ -4,31 +4,39 @@ import { motion } from "motion/react";
 import {
   ArrowUpRight,
   Cpu,
-  CircuitBoard,
-  Bot,
+  Lightbulb,
+  Users,
+  Wrench,
 } from "lucide-react";
 
 const focusAreas = [
   {
     number: "01",
     icon: Cpu,
-    title: "Robotics",
+    title: "BUILD",
     description:
-      "Designing and building robotic systems that turn engineering concepts into working machines.",
+      "Turn ideas into working machines through hands-on robotics, electronics, automation and embedded systems.",
   },
   {
     number: "02",
-    icon: CircuitBoard,
-    title: "Embedded Systems",
+    icon: Lightbulb,
+    title: "EXPERIMENT",
     description:
-      "Working with electronics, sensors, controllers and intelligent hardware to create connected systems.",
+      "Explore new technologies, test unconventional ideas and learn through practical experimentation.",
   },
   {
     number: "03",
-    icon: Bot,
-    title: "Autonomous Systems",
+    icon: Wrench,
+    title: "ENGINEER",
     description:
-      "Exploring automation, computer vision, artificial intelligence and systems capable of intelligent decisions.",
+      "Design, prototype and refine systems with a focus on solving real engineering problems.",
+  },
+  {
+    number: "04",
+    icon: Users,
+    title: "COLLABORATE",
+    description:
+      "Work together across disciplines, share knowledge and build projects as a team.",
   },
 ];
 
@@ -36,295 +44,261 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative z-10 overflow-hidden border-t border-white/[0.06] px-6 py-32 sm:py-40 lg:py-48"
+      className="relative overflow-hidden border-t border-white/[0.06] px-6 py-28 sm:px-10 sm:py-36 lg:px-16 lg:py-44"
     >
       <div className="mx-auto max-w-7xl">
 
-        {/* Section header */}
+        {/* Header */}
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{
             duration: 0.8,
             ease: [0.16, 1, 0.3, 1],
           }}
-          className="mb-20 flex items-center justify-between"
+          className="mb-20"
         >
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-[10px] tracking-[0.3em] text-cyan-400/70">
+          <div className="mb-8 flex items-center gap-3">
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-cyan-300/75">
               01
             </span>
 
-            <span className="h-px w-12 bg-white/15" />
+            <span className="h-px w-10 bg-cyan-400/50" />
 
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/35">
-              About the Club
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.28em] text-white/35">
+              About The Club
             </span>
           </div>
 
-          <span className="hidden font-mono text-[9px] uppercase tracking-[0.25em] text-white/15 sm:block">
-            GCET / ROBOTICS
-          </span>
+          <h2 className="max-w-5xl text-[clamp(3rem,6.5vw,6.5rem)] font-semibold leading-[0.9] tracking-[-0.055em] text-white">
+            WE BUILD
+            <br />
+            <span className="text-white/[0.25]">
+              WHAT COMES NEXT.
+            </span>
+          </h2>
         </motion.div>
 
-        {/* Main introduction */}
+        {/* Introduction */}
 
-        <div className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr] lg:gap-24">
+        <div className="grid gap-16 lg:grid-cols-[1fr_0.85fr] lg:gap-24">
+
+          {/* Left */}
 
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{
-              duration: 1,
+              duration: 0.8,
               ease: [0.16, 1, 0.3, 1],
             }}
           >
-            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-cyan-400/60">
-              Beyond the classroom
+            <div className="mb-8 h-px w-20 bg-cyan-400/60" />
+
+            <p className="max-w-2xl text-[17px] leading-8 text-white/65 sm:text-[18px] sm:leading-9">
+              The Robotics Club of Geetanjali College of Engineering and
+              Technology is a space for students to explore robotics,
+              technology and engineering through practical work.
             </p>
 
-            <h2 className="max-w-5xl text-[clamp(3.2rem,7vw,7rem)] font-semibold leading-[0.92] tracking-[-0.055em] text-white">
-              WE DON'T JUST
-              <br />
-              <span className="text-white/25">BUILD ROBOTS.</span>
-              <br />
-              WE BUILD
-              <br />
-              <span className="text-cyan-300/80">ENGINEERS.</span>
-            </h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{
-              duration: 0.9,
-              delay: 0.15,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="flex flex-col justify-end lg:pb-3"
-          >
-            <div className="mb-8 h-px w-16 bg-cyan-400/60" />
-
-            <p className="text-base leading-8 text-white/50 sm:text-lg">
-              The Robotics Club at Geetanjali College of Engineering &
-              Technology brings students together to explore robotics,
-              electronics, automation and intelligent systems through
-              hands-on engineering.
-            </p>
-
-            <p className="mt-6 text-sm leading-7 text-white/30">
-              From building prototypes and participating in technical
-              competitions to experimenting with emerging technologies,
-              the club provides a space where ideas can move from concepts
-              to working systems.
+            <p className="mt-7 max-w-2xl text-[15px] leading-8 text-white/40 sm:text-[16px]">
+              From autonomous vehicles and humanoid systems to aerial
+              robotics and experimental prototypes, the club encourages
+              students to move beyond theory and build things that work.
             </p>
 
             <a
               href="#projects"
-              className="group mt-9 flex w-fit items-center gap-3 border-b border-white/15 pb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-white/60 transition-colors duration-300 hover:border-cyan-400/50 hover:text-cyan-300"
+              className="group mt-10 inline-flex items-center gap-3 border-b border-white/[0.12] pb-3 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-white/60 transition-all duration-300 hover:border-cyan-300/40 hover:text-cyan-300"
             >
-              Explore our work
+              Explore our projects
 
               <ArrowUpRight
-                size={14}
+                size={15}
                 strokeWidth={1.4}
-                className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
               />
             </a>
           </motion.div>
-        </div>
 
-        {/* Technical visual */}
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{
-            duration: 1,
-            delay: 0.1,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-          className="relative mt-28 h-[420px] overflow-hidden border border-white/[0.07] bg-white/[0.015] sm:h-[500px] lg:mt-36"
-        >
-          {/* Grid */}
-
-          <div
-            className="absolute inset-0 opacity-[0.06]"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
-              `,
-              backgroundSize: "70px 70px",
-            }}
-          />
-
-          {/* Glow */}
+          {/* Right profile block */}
 
           <motion.div
-            className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-            animate={{
-              scale: [1, 1.12, 1],
-              opacity: [0.25, 0.45, 0.25],
-            }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
+              duration: 0.8,
+              delay: 0.15,
+              ease: [0.16, 1, 0.3, 1],
             }}
-            style={{
-              background:
-                "radial-gradient(circle, rgba(0,200,255,0.12), transparent 68%)",
-              filter: "blur(40px)",
-            }}
-          />
-
-          {/* Orbital rings */}
-
-          <motion.div
-            className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400/10"
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          <motion.div
-            className="absolute left-1/2 top-1/2 h-[180px] w-[180px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.08]"
-            animate={{ rotate: -360 }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          <motion.div
-            className="absolute left-1/2 top-1/2 h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/15"
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 14,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-
-          {/* Central CPU */}
-
-          <motion.div
-            className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan-300/20 bg-black/70"
-            animate={{
-              boxShadow: [
-                "0 0 20px rgba(0,200,255,0.05)",
-                "0 0 50px rgba(0,200,255,0.14)",
-                "0 0 20px rgba(0,200,255,0.05)",
-              ],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            className="relative"
           >
-            <Cpu
-              size={28}
-              strokeWidth={1}
-              className="text-cyan-300/70"
-            />
+            <div className="relative overflow-hidden border border-white/[0.08] bg-white/[0.015] p-8 sm:p-10">
+
+              <div className="absolute left-0 top-0 h-px w-16 bg-cyan-400/60" />
+              <div className="absolute left-0 top-0 h-16 w-px bg-cyan-400/60" />
+
+              <div className="absolute bottom-0 right-0 h-px w-16 bg-white/[0.12]" />
+              <div className="absolute bottom-0 right-0 h-16 w-px bg-white/[0.12]" />
+
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/35">
+                  Club / Profile
+                </span>
+
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan-300/60">
+                  GCET / RC
+                </span>
+              </div>
+
+              <div className="mt-16">
+                <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/30">
+                  Projects developed
+                </span>
+
+                <div className="mt-3 text-[clamp(4rem,7vw,6.5rem)] font-semibold leading-none tracking-[-0.07em] text-white">
+                  20<span className="text-cyan-300/60">+</span>
+                </div>
+              </div>
+
+              <div className="mt-14 grid grid-cols-2 gap-8 border-t border-white/[0.07] pt-7">
+
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
+                    Focus
+                  </p>
+
+                  <p className="mt-2 text-[14px] font-medium text-white/65">
+                    Robotics &amp; Technology
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
+                    Approach
+                  </p>
+
+                  <p className="mt-2 text-[14px] font-medium text-white/65">
+                    Build · Test · Learn
+                  </p>
+                </div>
+
+              </div>
+
+              <div className="mt-10 font-mono text-[10px] leading-5 tracking-[0.18em] text-white/[0.18]">
+                RC / GCET
+                <br />
+                SYSTEM / ACTIVE
+                <br />
+                MODE / BUILD
+              </div>
+
+            </div>
           </motion.div>
 
-          {/* Crosshair */}
-
-          <div className="absolute left-1/2 top-[18%] h-[64%] w-px -translate-x-1/2 bg-white/[0.06]" />
-
-          <div className="absolute left-[18%] top-1/2 h-px w-[64%] -translate-y-1/2 bg-white/[0.06]" />
-
-          {/* Technical labels */}
-
-          <div className="absolute left-6 top-6 font-mono text-[8px] uppercase tracking-[0.25em] text-white/20">
-            SYSTEM / 01
-          </div>
-
-          <div className="absolute right-6 top-6 font-mono text-[8px] uppercase tracking-[0.25em] text-white/20">
-            GCET / RC
-          </div>
-
-          <div className="absolute bottom-6 left-6 font-mono text-[8px] uppercase tracking-[0.25em] text-white/20">
-            ENGINEERING
-          </div>
-
-          <div className="absolute bottom-6 right-6 font-mono text-[8px] uppercase tracking-[0.25em] text-cyan-300/30">
-            ACTIVE
-          </div>
-
-          {/* Scan line */}
-
-          <motion.div
-            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent"
-            animate={{
-              top: ["10%", "90%", "10%"],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </motion.div>
+        </div>
 
         {/* Focus areas */}
 
-        <div className="mt-28 grid border-t border-white/[0.07] md:grid-cols-3">
-          {focusAreas.map((item, index) => {
-            const Icon = item.icon;
+        <div className="mt-28 sm:mt-36">
 
-            return (
-              <motion.div
-                key={item.number}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.7,
-                  delay: index * 0.1,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="group relative border-b border-white/[0.07] py-10 md:border-b-0 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
-              >
-                <div className="mb-8 flex items-center justify-between">
-                  <span className="font-mono text-[9px] tracking-[0.25em] text-white/20">
-                    {item.number}
-                  </span>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="mb-10 flex items-end justify-between"
+          >
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-cyan-300/60">
+                What We Do
+              </p>
 
-                  <Icon
-                    size={20}
-                    strokeWidth={1}
-                    className="text-white/20 transition-colors duration-300 group-hover:text-cyan-300/70"
-                  />
-                </div>
+              <h3 className="mt-4 text-3xl font-medium tracking-[-0.03em] text-white sm:text-4xl">
+                From idea to prototype.
+              </h3>
+            </div>
 
-                <h3 className="text-xl font-medium tracking-tight text-white/80 transition-colors duration-300 group-hover:text-white">
-                  {item.title}
-                </h3>
+            <span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-white/20 sm:block">
+              04 / Focus Areas
+            </span>
+          </motion.div>
 
-                <p className="mt-4 max-w-sm text-sm leading-7 text-white/35">
-                  {item.description}
-                </p>
+          <div className="grid border-l border-t border-white/[0.07] sm:grid-cols-2 lg:grid-cols-4">
 
-                <div className="mt-8 h-px w-0 bg-cyan-400/50 transition-all duration-500 group-hover:w-12" />
-              </motion.div>
-            );
-          })}
+            {focusAreas.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.div
+                  key={item.number}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{
+                    duration: 0.65,
+                    delay: index * 0.08,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="group relative min-h-[290px] border-b border-r border-white/[0.07] p-7 transition-colors duration-500 hover:bg-white/[0.025] sm:p-8"
+                >
+                  <div className="flex items-center justify-between">
+
+                    <span className="font-mono text-[11px] tracking-[0.2em] text-white/25">
+                      {item.number}
+                    </span>
+
+                    <Icon
+                      size={19}
+                      strokeWidth={1.2}
+                      className="text-white/25 transition-colors duration-300 group-hover:text-cyan-300"
+                    />
+
+                  </div>
+
+                  <h4 className="mt-20 text-xl font-medium tracking-[-0.02em] text-white/80 transition-colors duration-300 group-hover:text-white">
+                    {item.title}
+                  </h4>
+
+                  <p className="mt-4 text-[14px] leading-7 text-white/38">
+                    {item.description}
+                  </p>
+
+                  <div className="absolute bottom-0 left-0 h-px w-0 bg-cyan-300/60 transition-all duration-500 group-hover:w-full" />
+                </motion.div>
+              );
+            })}
+
+          </div>
         </div>
+
+        {/* Bottom statement */}
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8 }}
+          className="mt-24 border-t border-white/[0.07] pt-8 sm:mt-32 sm:pt-10"
+        >
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+
+            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-white/25">
+              Robotics Club / GCET
+            </span>
+
+            <p className="max-w-2xl text-[15px] leading-7 text-white/38 sm:text-right sm:text-[16px]">
+              We believe the best way to understand technology is to build
+              with it, break it, improve it and build again.
+            </p>
+
+          </div>
+        </motion.div>
+
       </div>
     </section>
   );
