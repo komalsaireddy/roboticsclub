@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 
 const particles = [
@@ -13,12 +14,130 @@ const particles = [
   { left: "47%", top: "12%", delay: 2.8 },
 ];
 
+// Extend HTMLVideoElement to include optional fastSeek
+interface VideoWithFastSeek extends HTMLVideoElement {
+  fastSeek?: (time: number) => void;
+}
+
 export default function GlobalBackground() {
+  const videoRef = useRef<VideoWithFastSeek>(null);
+  const rafRef = useRef<number | null>(null);
+
+  // Scroll state
+  const scrollProgressRef = useRef(0);   // 0 → 1, where we want to be
+  const currentProgressRef = useRef(0);  // smoothed current position
+  const lastScrollYRef = useRef(0);
+  const isScrollingRef = useRef(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Keep video paused; we control it via currentTime
+    const onMeta = () => video.pause();
+    video.addEventListener("loadedmetadata", onMeta);
+    if (video.readyState >= 1) onMeta();
+
+    // ── Scroll listener ──────────────────────────────────────────────────────
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      scrollProgressRef.current =
+        maxScroll > 0 ? Math.min(Math.max(scrollY / maxScroll, 0), 1) : 0;
+
+      lastScrollYRef.current = scrollY;
+      isScrollingRef.current = true;
+
+      // Mark scrolling as stopped after 120 ms of silence
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 120);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    // ── rAF loop ─────────────────────────────────────────────────────────────
+    // Strategy: smoothly lerp `currentProgressRef` toward `scrollProgressRef`,
+    // then seek the video to the corresponding time using fastSeek() when
+    // available (avoids full key-frame decode), otherwise currentTime.
+    //
+    // Lerp factor of 0.18 per frame (~60 fps) gives a ~3-frame lag which reads
+    // as buttery smooth to the eye while still feeling responsive.
+
+    const loop = () => {
+      if (video.duration) {
+        const target = scrollProgressRef.current;
+        const current = currentProgressRef.current;
+        const diff = target - current;
+
+        // Adaptive lerp: faster when far away, slower when close
+        // This avoids the "rubber band" snap at the end
+        const lerpFactor = isScrollingRef.current
+          ? 0.18   // responsive while scrolling
+          : 0.10;  // gentle settle when stopped
+
+        if (Math.abs(diff) > 0.0001) {
+          currentProgressRef.current = current + diff * lerpFactor;
+
+          const newTime = currentProgressRef.current * video.duration;
+
+          // fastSeek() is optimised for non-precise seeks (skips to nearest
+          // keyframe), making it much faster than setting currentTime directly.
+          if (video.fastSeek) {
+            video.fastSeek(newTime);
+          } else {
+            video.currentTime = newTime;
+          }
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+      video.removeEventListener("loadedmetadata", onMeta);
+    };
+  }, []);
+
   return (
     <div
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#030303]"
       aria-hidden="true"
     >
+      {/* ── Scroll-driven video background ── */}
+      <video
+        ref={videoRef}
+        src="/robot-bg.mp4"
+        muted
+        playsInline
+        preload="auto"
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{
+          opacity: 0.2,
+          // GPU-composite the video layer so seeking doesn't trigger layout
+          willChange: "contents",
+          transform: "translateZ(0)",
+        }}
+      />
+
+      {/* Heavy gradient vignette — keeps video very dim */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 60% 40%, rgba(3,3,3,0.45) 0%, rgba(3,3,3,0.82) 100%)",
+        }}
+      />
+
       {/* Technical grid */}
       <div
         className="absolute inset-0 opacity-[0.055]"
