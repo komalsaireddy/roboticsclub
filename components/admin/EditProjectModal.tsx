@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   updateProject,
@@ -33,6 +34,7 @@ interface EditProjectModalProps {
 export default function EditProjectModal({
   project,
 }: EditProjectModalProps) {
+  const router = useRouter();
   const [
     dirty,
     setDirty,
@@ -106,8 +108,8 @@ export default function EditProjectModal({
       }
     }
 
-    window.location.href =
-      "/admin/projects";
+    router.push("/admin/projects");
+    router.refresh();
   }
 
   /* ==========================================================

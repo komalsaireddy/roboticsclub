@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ShieldX, ArrowLeft, Home } from "lucide-react";
 
 export default function AccessDenied() {
@@ -24,16 +25,16 @@ export default function AccessDenied() {
           ERROR 403
         </p>
 
-        {/* Heading */}
+        {/* Title */}
 
-        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+        <h1 className="mt-3 text-3xl font-medium tracking-[-0.03em] text-white sm:text-4xl">
           Access Denied
         </h1>
 
         {/* Description */}
 
         <p className="mx-auto mt-5 max-w-md text-sm leading-7 text-white/35">
-          You don't have permission to access this section
+          You don&apos;t have permission to access this section
           of the Robotics Club management portal.
         </p>
 
@@ -41,21 +42,21 @@ export default function AccessDenied() {
 
         <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
 
-          <a
+          <Link
             href="/admin"
             className="inline-flex h-11 items-center justify-center gap-2 bg-white px-6 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-black transition-colors hover:bg-cyan-300"
           >
             <ArrowLeft size={14} />
             Back to Dashboard
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/"
             className="inline-flex h-11 items-center justify-center gap-2 border border-white/[0.1] px-6 font-mono text-[10px] uppercase tracking-[0.18em] text-white/45 transition-colors hover:border-white/20 hover:text-white"
           >
             <Home size={14} />
             Website
-          </a>
+          </Link>
 
         </div>
 

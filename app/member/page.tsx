@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import {
   createSupabaseServerClient,
@@ -132,7 +133,7 @@ export default async function MemberPage() {
 
         <div className="mx-auto flex h-20 max-w-[1500px] items-center justify-between px-6 lg:px-10">
 
-          <a
+          <Link
             href="/"
             className="flex items-center gap-4"
           >
@@ -159,7 +160,7 @@ export default async function MemberPage() {
 
             </div>
 
-          </a>
+          </Link>
 
           <a
             href="/auth/signout"
@@ -309,9 +310,9 @@ export default async function MemberPage() {
 
         </section>
 
-        {/* EXPLORE */}
+        {/* QUICK LINKS */}
 
-        <section className="mt-12">
+        <div>
 
           <p className="mb-5 font-mono text-[9px] uppercase tracking-[0.22em] text-white/20">
             Explore
@@ -319,7 +320,7 @@ export default async function MemberPage() {
 
           <div className="grid gap-3 md:grid-cols-3">
 
-            <a
+            <Link
               href="/#projects"
               className="group border border-white/[0.08] bg-white/[0.015] p-7 transition-colors hover:border-cyan-300/20"
             >
@@ -336,9 +337,9 @@ export default async function MemberPage() {
                 ↗
               </span>
 
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/#events"
               className="group border border-white/[0.08] bg-white/[0.015] p-7 transition-colors hover:border-cyan-300/20"
             >
@@ -355,9 +356,9 @@ export default async function MemberPage() {
                 ↗
               </span>
 
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/#team"
               className="group border border-white/[0.08] bg-white/[0.015] p-7 transition-colors hover:border-cyan-300/20"
             >
@@ -374,11 +375,11 @@ export default async function MemberPage() {
                 ↗
               </span>
 
-            </a>
+            </Link>
 
           </div>
 
-        </section>
+        </div>
 
       </div>
 

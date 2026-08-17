@@ -90,7 +90,7 @@ export default function UpdatesSection({
           className="mb-20 grid gap-10 lg:grid-cols-[1fr_0.55fr] lg:items-end"
         >
           <h2 className="text-[clamp(3rem,6.5vw,6.5rem)] font-semibold leading-[0.88] tracking-[-0.055em] text-white">
-            WHAT'S
+            WHAT&apos;S
             <br />
             <span className="text-white/[0.25]">
               HAPPENING

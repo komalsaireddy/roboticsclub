@@ -4,6 +4,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   updateEvent,
@@ -35,15 +36,12 @@ interface Props {
 export default function EditEventModal({
   event,
 }: Props) {
+  const router = useRouter();
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  if (!event) {
-    return null;
-  }
-
   useEffect(() => {
-    if (!dirty) {
+    if (!event || !dirty) {
       return;
     }
 
@@ -65,7 +63,11 @@ export default function EditEventModal({
         handleBeforeUnload
       );
     };
-  }, [dirty]);
+  }, [dirty, event]);
+
+  if (!event) {
+    return null;
+  }
 
   function closeModal() {
     if (saving) {
@@ -83,8 +85,8 @@ export default function EditEventModal({
       }
     }
 
-    window.location.href =
-      "/admin/events";
+    router.push("/admin/events");
+    router.refresh();
   }
 
   function handleBackdrop(
