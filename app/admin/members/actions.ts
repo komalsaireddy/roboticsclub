@@ -671,3 +671,169 @@ export async function rejectMembershipRequest(
     "/admin/members"
   );
 }
+
+/* ============================================================
+   REMOVE / REVOKE MEMBER ACCESS
+============================================================ */
+
+export async function removeMember(
+  formData: FormData
+): Promise<void> {
+  const {
+    supabase,
+    user,
+  } = await requireMemberPermission();
+
+  const id = String(
+    formData.get("id") ?? ""
+  ).trim();
+
+  if (!id) {
+    throw new Error(
+      "Member ID is required."
+    );
+  }
+
+  if (id === user.id) {
+    throw new Error(
+      "You cannot revoke your own account access."
+    );
+  }
+
+  /* ==========================================================
+     LOAD MEMBER
+  ========================================================== */
+
+  const {
+    data: existingMember,
+    error: memberError,
+  } =
+    await supabase
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        role_id,
+        roles (
+          id,
+          name,
+          rank
+        )
+      `)
+      .eq("id", id)
+      .maybeSingle();
+
+  if (memberError || !existingMember) {
+    throw new Error(
+      "Member not found."
+    );
+  }
+
+  const existingRole =
+    Array.isArray(
+      existingMember.roles
+    )
+      ? existingMember.roles[0]
+      : existingMember.roles;
+
+  if (existingRole?.name === "Owner") {
+    throw new Error(
+      "The Owner account membership cannot be revoked."
+    );
+  }
+
+  /* ==========================================================
+     CHECK CALLER RANK
+  ========================================================== */
+
+  const {
+    data: currentProfile,
+  } =
+    await supabase
+      .from("profiles")
+      .select(`
+        id,
+        role_id,
+        roles (
+          id,
+          name,
+          rank
+        )
+      `)
+      .eq("id", user.id)
+      .maybeSingle();
+
+  const currentRole =
+    Array.isArray(
+      currentProfile?.roles
+    )
+      ? currentProfile.roles[0]
+      : currentProfile?.roles;
+
+  const currentRank =
+    currentRole?.rank ?? 0;
+
+  if (
+    existingRole &&
+    existingRole.rank >= currentRank &&
+    currentRole?.name !== "Owner"
+  ) {
+    throw new Error(
+      "You cannot revoke access for a member with an equal or higher rank than your own."
+    );
+  }
+
+  /* ==========================================================
+     REVOKE ACCESS
+  ========================================================== */
+
+  const {
+    error: updateError,
+  } =
+    await supabase
+      .from("profiles")
+      .update({
+        role_id: null,
+      })
+      .eq("id", id);
+
+  if (updateError) {
+    throw new Error(
+      updateError.message
+    );
+  }
+
+  await supabase
+    .from("membership_requests")
+    .update({
+      status: "rejected",
+      reviewed_by: user.id,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("user_id", id);
+
+  /* ==========================================================
+     AUDIT LOG
+  ========================================================== */
+
+  await createAuditLog({
+    supabase,
+    userId: user.id,
+    action: "member_removed",
+    entityType: "member",
+    entityId: id,
+    description: `Revoked membership access for ${existingMember.full_name ?? id}`,
+    metadata: {
+      removed_member_id: id,
+      removed_member_name: existingMember.full_name,
+      previous_role: existingRole?.name ?? "Unassigned",
+    },
+  });
+
+  revalidatePath("/admin/members");
+  revalidatePath("/admin/roles");
+  revalidatePath("/member");
+
+  redirect("/admin/members");
+}
+

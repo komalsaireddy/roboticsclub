@@ -1,17 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import {
   ArrowUpRight,
+  CheckCircle2,
   Loader2,
   LockKeyhole,
   Mail,
 } from "lucide-react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+function RegistrationBanner() {
+  const searchParams = useSearchParams();
+  const registered = searchParams.get("registered") === "true";
+
+  if (!registered) {
+    return null;
+  }
+
+  return (
+    <div className="mb-6 border border-emerald-400/20 bg-emerald-400/[0.04] p-4 text-emerald-200">
+      <div className="flex items-start gap-3">
+        <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-400" />
+        <div>
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-300">
+            Registration Submitted
+          </p>
+          <p className="mt-1 text-[13px] leading-5 text-emerald-200/80">
+            Your account has been created. A Robotics Club administrator will review your access request shortly.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -220,6 +246,10 @@ export default function LoginPage() {
         ======================================================== */}
 
         <div className="border border-white/[0.08] bg-white/[0.02] p-7 backdrop-blur-xl sm:p-9">
+
+          <Suspense fallback={null}>
+            <RegistrationBanner />
+          </Suspense>
 
           <div className="mb-8">
 
