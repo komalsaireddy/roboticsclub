@@ -31,7 +31,7 @@ const ALLOWED_TYPES = [
 
 export default function GalleryImageUploader({
   currentImageUrl,
-  currentStoragePath,
+  currentStoragePath: _currentStoragePath,
   onUploaded,
 }: GalleryImageUploaderProps) {
   const inputRef =

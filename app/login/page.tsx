@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import {
   ArrowUpRight,
@@ -372,14 +373,14 @@ export default function LoginPage() {
 
         <p className="mt-7 text-center text-[15px] text-white/30">
 
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
 
-          <a
+          <Link
             href="/register"
             className="text-cyan-300/70 transition-colors hover:text-cyan-200"
           >
             Register
-          </a>
+          </Link>
 
         </p>
 
@@ -389,12 +390,12 @@ export default function LoginPage() {
 
         <div className="mt-5 text-center">
 
-          <a
+          <Link
             href="/"
             className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/25 transition-colors hover:text-cyan-300"
           >
             ← Back to website
-          </a>
+          </Link>
 
         </div>
 
