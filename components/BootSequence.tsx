@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface BootSequenceProps {
   onComplete?: () => void;
@@ -10,10 +10,14 @@ interface BootSequenceProps {
 export default function BootSequence({
   onComplete,
 }: BootSequenceProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [visible, setVisible] = useState(true);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
+    // Force-play regardless of browser autoplay cache state
+    videoRef.current?.play().catch(() => {});
+
     const exitTimer = setTimeout(() => {
       setExiting(true);
     }, 2600);
@@ -108,12 +112,14 @@ export default function BootSequence({
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <video
+              ref={videoRef}
               src="/boot-animation.mp4"
               autoPlay
               muted
               loop
               playsInline
-              className="relative h-40 w-40 object-contain md:h-48 md:w-48"
+              preload="auto"
+              className="relative h-52 w-52 object-contain md:h-60 md:w-60"
             />
           </motion.div>
 
