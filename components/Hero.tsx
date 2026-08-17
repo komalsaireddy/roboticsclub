@@ -72,7 +72,7 @@ export default function Hero() {
                 delay: 0.35,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="whitespace-nowrap text-[clamp(3rem,7.2vw,7rem)] font-semibold leading-[0.86] tracking-[-0.065em] text-white"
+              className="text-[clamp(2.2rem,7.2vw,7rem)] font-semibold leading-[0.88] tracking-[-0.055em] text-white break-words sm:whitespace-nowrap"
             >
               ENGINEERING
             </motion.h1>
@@ -91,7 +91,7 @@ export default function Hero() {
                 delay: 0.48,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="whitespace-nowrap text-[clamp(3rem,7.2vw,7rem)] font-semibold leading-[0.90] tracking-[-0.065em] text-white/[0.27]"
+              className="text-[clamp(2.2rem,7.2vw,7rem)] font-semibold leading-[0.90] tracking-[-0.055em] text-white/[0.27] break-words sm:whitespace-nowrap"
             >
               THE FUTURE.
             </motion.h2>

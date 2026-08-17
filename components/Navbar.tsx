@@ -202,7 +202,7 @@ export default function Navbar() {
         transition={{
           duration: 0.25,
         }}
-        className="fixed inset-0 z-40 bg-[#030303]/95 backdrop-blur-xl lg:hidden"
+        className="fixed inset-0 z-40 overflow-y-auto bg-[#030303]/95 backdrop-blur-xl lg:hidden"
       >
 
         <div className="flex min-h-screen flex-col px-7 pb-10 pt-32">
