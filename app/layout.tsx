@@ -71,6 +71,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        {/* Preload videos so they're ready before JS mounts */}
+        <link rel="preload" href="/boot-animation.mp4" as="video" type="video/mp4" />
+        <link rel="preload" href="/robot-bg.mp4" as="video" type="video/mp4" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
