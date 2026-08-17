@@ -115,6 +115,30 @@ export async function GET() {
     : profile?.roles;
 
   /* ============================================================
+     PRIORITY: EXISTING ADMIN / OWNER ROLE
+     
+     If the account already has a high-rank role (>= 30),
+     grant access immediately — bypasses pending/rejected gate.
+     This covers accounts seeded directly in the database.
+  ============================================================ */
+
+  if (
+    role &&
+    role.rank >= 30
+  ) {
+    return NextResponse.json({
+      authenticated: true,
+      status: "approved",
+      destination: "/admin",
+      role: {
+        name: role.name,
+        rank: role.rank,
+        color: role.color,
+      },
+    });
+  }
+
+  /* ============================================================
      PENDING
   ============================================================ */
 
@@ -177,29 +201,6 @@ export async function GET() {
       authenticated: true,
       status: "approved",
       destination: "/member",
-      role: {
-        name: role.name,
-        rank: role.rank,
-        color: role.color,
-      },
-    });
-  }
-
-  /* ============================================================
-     EXISTING ADMIN / OWNER ACCOUNTS
-     
-     If an existing account has a role but no membership
-     request, preserve access.
-  ============================================================ */
-
-  if (
-    role &&
-    role.rank >= 30
-  ) {
-    return NextResponse.json({
-      authenticated: true,
-      status: "approved",
-      destination: "/admin",
       role: {
         name: role.name,
         rank: role.rank,
