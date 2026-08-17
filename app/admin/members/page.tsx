@@ -8,6 +8,7 @@ import AccessDenied from "@/components/admin/AccessDenied";
 
 import {
   updateMember,
+  removeMember,
   approveMembershipRequest,
   rejectMembershipRequest,
 } from "./actions";
@@ -461,14 +462,28 @@ export default async function AdminMembersPage() {
 
                       </div>
 
-                      {/* SAVE */}
+                      {/* ACTIONS */}
 
-                      <button
-                        type="submit"
-                        className="h-11 bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300"
-                      >
-                        Save
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2">
+
+                        <button
+                          type="submit"
+                          className="h-11 bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300"
+                        >
+                          Save
+                        </button>
+
+                        <button
+                          type="submit"
+                          formAction={removeMember}
+                          disabled={member.id === user.id || role?.name === "Owner"}
+                          className="h-11 border border-red-400/20 px-4 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300/60 transition-colors hover:border-red-400/50 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-30"
+                          title={member.id === user.id ? "Cannot revoke yourself" : role?.name === "Owner" ? "Cannot revoke Owner" : "Revoke membership access"}
+                        >
+                          Revoke Access
+                        </button>
+
+                      </div>
 
                       {/* DETAILS */}
 
