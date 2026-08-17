@@ -67,6 +67,7 @@ export default async function AdminMembersPage() {
           color
         )
       `)
+      .not("role_id", "is", null)
       .order("created_at", {
         ascending: true,
       });
