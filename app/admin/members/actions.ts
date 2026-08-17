@@ -787,22 +787,7 @@ export async function removeMember(
      REVOKE ACCESS
   ========================================================== */
 
-  const {
-    error: updateError,
-  } =
-    await supabase
-      .from("profiles")
-      .update({
-        role_id: null,
-      })
-      .eq("id", id);
-
-  if (updateError) {
-    throw new Error(
-      updateError.message
-    );
-  }
-
+  // 1. Update any membership_requests for this user to 'rejected'
   await supabase
     .from("membership_requests")
     .update({
@@ -811,6 +796,20 @@ export async function removeMember(
       reviewed_at: new Date().toISOString(),
     })
     .eq("user_id", id);
+
+  // 2. Delete profile record so the revoked user is completely removed from members
+  const { error: deleteError } = await supabase
+    .from("profiles")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    // Fallback: If delete is constrained by foreign keys, clear role_id
+    await supabase
+      .from("profiles")
+      .update({ role_id: null })
+      .eq("id", id);
+  }
 
   /* ==========================================================
      AUDIT LOG

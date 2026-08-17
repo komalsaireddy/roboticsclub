@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import CyberpunkCursor from "@/components/CyberpunkCursor";
 import AudioToggle from "@/components/AudioToggle";
 import "./globals.css";
 
@@ -85,9 +84,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-
-        {/* Custom Desktop Cursor */}
-        <CyberpunkCursor />
 
         {/* Main Content */}
         <div id="main-content" className="flex-1">

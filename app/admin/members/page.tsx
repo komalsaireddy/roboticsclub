@@ -477,7 +477,7 @@ export default async function AdminMembersPage() {
                           type="submit"
                           formAction={removeMember}
                           disabled={member.id === user.id || role?.name === "Owner"}
-                          className="h-11 border border-red-400/20 px-4 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300/60 transition-colors hover:border-red-400/50 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-30"
+                          className="h-11 border border-red-500/40 bg-red-500/10 px-5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300 transition-colors hover:bg-red-500/30 hover:border-red-500/70 disabled:cursor-not-allowed disabled:opacity-20"
                           title={member.id === user.id ? "Cannot revoke yourself" : role?.name === "Owner" ? "Cannot revoke Owner" : "Revoke membership access"}
                         >
                           Revoke Access
