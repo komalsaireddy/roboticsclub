@@ -14,13 +14,8 @@ const particles = [
   { left: "47%", top: "12%", delay: 2.8 },
 ];
 
-// Extend HTMLVideoElement to include optional fastSeek
-interface VideoWithFastSeek extends HTMLVideoElement {
-  fastSeek?: (time: number) => void;
-}
-
 export default function GlobalBackground() {
-  const videoRef = useRef<VideoWithFastSeek>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const rafRef = useRef<number | null>(null);
 
   // Scroll state
@@ -87,8 +82,10 @@ export default function GlobalBackground() {
 
           // fastSeek() is optimised for non-precise seeks (skips to nearest
           // keyframe), making it much faster than setting currentTime directly.
-          if (video.fastSeek) {
-            video.fastSeek(newTime);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if (typeof (video as any).fastSeek === "function") {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (video as any).fastSeek(newTime);
           } else {
             video.currentTime = newTime;
           }
