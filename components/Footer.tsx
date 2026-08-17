@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowUp } from "lucide-react";
 
@@ -112,6 +113,13 @@ export default function Footer() {
                 >
                   Contact
                 </a>
+
+                <Link
+                  href="/credits"
+                  className="text-xs text-cyan-400/70 transition-colors hover:text-cyan-300"
+                >
+                  Tech Stack & Credits
+                </Link>
               </div>
             </div>
 

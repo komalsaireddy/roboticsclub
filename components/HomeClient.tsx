@@ -13,6 +13,7 @@ import GlobalBackground from "@/components/GlobalBackground";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
+import JoinStepperSection from "@/components/JoinStepperSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import EventsSection from "@/components/EventsSection";
 import TeamSection from "@/components/TeamSection";
@@ -62,6 +63,8 @@ export default function HomeClient({
       <Hero />
 
       <AboutSection />
+
+      <JoinStepperSection />
 
       <ProjectsSection
         projects={projects}
