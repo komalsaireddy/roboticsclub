@@ -377,139 +377,164 @@ export default async function AdminMembersPage() {
 
                   return (
 
-                    <form
+                    <div
                       key={member.id}
-                      action={updateMember}
-                      className="grid gap-5 px-6 py-7 lg:grid-cols-[1fr_1fr_220px_auto] lg:items-end"
+                      className="border-b border-white/[0.04] px-6 py-7"
                     >
 
-                      <input
-                        type="hidden"
-                        name="id"
-                        value={member.id}
-                      />
+                      {/* DETAILS ROW */}
 
-                      {/* NAME */}
+                      <div className="mb-4 flex flex-wrap items-center gap-3">
 
-                      <div>
-
-                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                          Name
-                        </label>
-
-                        <input
-                          name="full_name"
-                          defaultValue={
-                            member.full_name ?? ""
-                          }
-                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
-                        />
-
-                      </div>
-
-                      {/* AVATAR */}
-
-                      <div>
-
-                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                          Avatar URL
-                        </label>
-
-                        <input
-                          name="avatar_url"
-                          defaultValue={
-                            member.avatar_url ?? ""
-                          }
-                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
-                        />
-
-                      </div>
-
-                      {/* ROLE */}
-
-                      <div>
-
-                        <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
-                          Role
-                        </label>
-
-                        <select
-                          name="role_id"
-                          defaultValue={
-                            member.role_id ?? ""
-                          }
-                          className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-sm text-white/70 outline-none focus:border-cyan-400/40"
+                        <p
+                          className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/20"
                         >
-
-                          <option value="">
-                            Select role
-                          </option>
-
-                          {roleList.map(
-                            (item) => (
-
-                              <option
-                                key={item.id}
-                                value={item.id}
-                              >
-                                {item.name} — Rank{" "}
-                                {item.rank}
-                              </option>
-
-                            )
-                          )}
-
-                        </select>
-
-                      </div>
-
-                      {/* ACTIONS */}
-
-                      <div className="flex flex-wrap items-center gap-2">
-
-                        <button
-                          type="submit"
-                          className="h-11 bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300"
-                        >
-                          Save
-                        </button>
-
-                        <button
-                          type="submit"
-                          formAction={removeMember}
-                          disabled={member.id === user.id || role?.name === "Owner"}
-                          className="h-11 border border-red-500/40 bg-red-500/10 px-5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300 transition-colors hover:bg-red-500/30 hover:border-red-500/70 disabled:cursor-not-allowed disabled:opacity-20"
-                          title={member.id === user.id ? "Cannot revoke yourself" : role?.name === "Owner" ? "Cannot revoke Owner" : "Revoke membership access"}
-                        >
-                          Revoke Access
-                        </button>
-
-                      </div>
-
-                      {/* DETAILS */}
-
-                      <div className="lg:col-span-4">
-
-                        <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/20">
                           ID: {member.id}
                         </p>
 
+                        <span className="text-white/10">·</span>
+
                         <p
-                          className="mt-2 font-mono text-[9px] uppercase tracking-[0.12em]"
+                          className="font-mono text-[9px] uppercase tracking-[0.12em]"
                           style={{
                             color:
-                              role?.color ??
-                              "#888780",
+                              role?.color ?? "#888780",
                           }}
                         >
-                          Current Role:{" "}
-                          {role?.name ??
-                            "Unassigned"}
+                          {role?.name ?? "Unassigned"}
                         </p>
 
                       </div>
 
-                    </form>
+                      {/* EDIT FORM */}
+
+                      <form
+                        action={updateMember}
+                        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_220px_auto] lg:items-end"
+                      >
+
+                        <input
+                          type="hidden"
+                          name="id"
+                          value={member.id}
+                        />
+
+                        {/* NAME */}
+
+                        <div>
+
+                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                            Name
+                          </label>
+
+                          <input
+                            name="full_name"
+                            defaultValue={
+                              member.full_name ?? ""
+                            }
+                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-[16px] text-white/70 outline-none focus:border-cyan-400/40 sm:text-sm"
+                          />
+
+                        </div>
+
+                        {/* AVATAR */}
+
+                        <div>
+
+                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                            Avatar URL
+                          </label>
+
+                          <input
+                            name="avatar_url"
+                            defaultValue={
+                              member.avatar_url ?? ""
+                            }
+                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-[16px] text-white/70 outline-none focus:border-cyan-400/40 sm:text-sm"
+                          />
+
+                        </div>
+
+                        {/* ROLE */}
+
+                        <div>
+
+                          <label className="mb-2 block font-mono text-[9px] uppercase tracking-[0.18em] text-white/30">
+                            Role
+                          </label>
+
+                          <select
+                            name="role_id"
+                            defaultValue={
+                              member.role_id ?? ""
+                            }
+                            className="h-11 w-full border border-white/[0.1] bg-[#050505] px-3 text-[16px] text-white/70 outline-none focus:border-cyan-400/40 sm:text-sm"
+                          >
+
+                            <option value="">
+                              Select role
+                            </option>
+
+                            {roleList.map(
+                              (item) => (
+
+                                <option
+                                  key={item.id}
+                                  value={item.id}
+                                >
+                                  {item.name} — Rank{" "}
+                                  {item.rank}
+                                </option>
+
+                              )
+                            )}
+
+                          </select>
+
+                        </div>
+
+                        {/* SAVE */}
+
+                        <div className="flex items-end">
+
+                          <button
+                            type="submit"
+                            className="h-11 w-full bg-white px-6 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-black transition-colors hover:bg-cyan-300 lg:w-auto"
+                          >
+                            Save
+                          </button>
+
+                        </div>
+
+                      </form>
+
+                      {/* REVOKE ACCESS — separate form to avoid iOS formAction issues */}
+
+                      {member.id !== user.id && role?.name !== "Owner" && (
+
+                        <form
+                          action={removeMember}
+                          className="mt-3"
+                        >
+
+                          <input
+                            type="hidden"
+                            name="id"
+                            value={member.id}
+                          />
+
+                          <button
+                            type="submit"
+                            className="h-10 border border-red-500/40 bg-red-500/[0.06] px-5 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-red-300/80 transition-colors hover:border-red-500/70 hover:bg-red-500/20 hover:text-red-300"
+                          >
+                            Revoke Access
+                          </button>
+
+                        </form>
+
+                      )}
+
+                    </div>
 
                   );
                 }
