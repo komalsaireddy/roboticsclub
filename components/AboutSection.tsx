@@ -1,9 +1,13 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   ArrowUpRight,
+  Award,
+  ChevronDown,
   Cpu,
+  HelpCircle,
   Lightbulb,
   Users,
   Wrench,
@@ -41,6 +45,8 @@ const focusAreas = [
 ];
 
 export default function AboutSection() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
     <section
       id="about"
@@ -274,6 +280,97 @@ export default function AboutSection() {
             })}
 
           </div>
+        </div>
+
+        {/* FAQ Accordion Section */}
+
+        <div className="mt-28 sm:mt-36">
+
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="mb-12 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"
+          >
+            <div>
+              <div className="flex items-center gap-3">
+                <HelpCircle size={16} className="text-cyan-400/70" />
+                <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-cyan-300/60">
+                  Got Questions?
+                </p>
+              </div>
+
+              <h3 className="mt-3 text-3xl font-medium tracking-[-0.03em] text-white sm:text-4xl">
+                Frequently Asked Questions
+              </h3>
+            </div>
+
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/20">
+              05 / FAQ & Info
+            </span>
+          </motion.div>
+
+          <div className="divide-y divide-white/[0.08] border-b border-t border-white/[0.08]">
+
+            {[
+              {
+                q: "Who can join the Robotics Club?",
+                a: "Any enrolled student at Geetanjali College of Engineering and Technology (GCET), regardless of branch or academic year, is welcome to register and join the club."
+              },
+              {
+                q: "Is prior experience in robotics or programming required?",
+                a: "No! We regularly host hands-on beginner workshops covering Arduino programming, Raspberry Pi, 3D printing, CAD modeling, sensor interfacing, and PCB design."
+              },
+              {
+                q: "How can I participate in club projects and competitions?",
+                a: "Members can join active project teams, register for internal hackathons like Robotica, or pitch original project ideas to receive component funding and faculty mentorship."
+              },
+              {
+                q: "What equipment and lab tools does the club provide?",
+                a: "Our dedicated innovation lab is equipped with 3D printers, soldering stations, digital oscilloscopes, microcontrollers, motor drivers, sensor modules, and CAD workstations."
+              },
+              {
+                q: "How long does it take for a membership request to be approved?",
+                a: "After submitting your registration on the website, a Robotics Club administrator will review and approve your account within 24 to 48 hours."
+              }
+            ].map((faq, index) => (
+              <div key={index} className="py-6 sm:py-7">
+                <button
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  className="flex w-full items-center justify-between text-left transition-colors hover:text-cyan-300"
+                >
+                  <span className="text-lg font-medium text-white/85 sm:text-xl">
+                    {faq.q}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={`shrink-0 text-white/40 transition-transform duration-300 ${
+                      openFaq === index ? "rotate-180 text-cyan-300" : ""
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {openFaq === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="mt-4 max-w-3xl text-[15px] leading-7 text-white/45 sm:text-[16px]">
+                        {faq.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+
+          </div>
+
         </div>
 
         {/* Bottom statement */}
